@@ -5,12 +5,14 @@
 
 ### Requisitos
 
-| Ferramenta                                                         | Versão mínima |
+| Ferramenta                                                         | Versão        |
 | ------------------------------------------------------------------ | ------------- |
 | [.NET SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) | 8.0           |
 | [Node.js](https://nodejs.org/en/)                                  | 20.x          |
 | npm                                                                | 10.x          |
 | SQL Server                                                         | 2019+         |
+| **Entity Framework Core Tools (`dotnet-ef`)**                      | 8.0+          |
+
 
 ### Clonar o repositório
 
@@ -27,11 +29,20 @@ cd DTI-full-stack
         "DefaultConnection": "Server=localhost;Database=LeadManagerDB;Trusted_Connection=True;TrustServerCertificate=True;"
     }
 ```
+- Se estiver usando SQLExpress deve estar assim:
+
+```json
+    "ConnectionStrings": {
+        "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=LeadManagerDB;Trusted_Connection=True;TrustServerCertificate=True;"
+    }
+```
+
 - Na pasta `backend` execute para criar o banco de dados e executar o backend:
 
 ```bash
 cd backend
 dotnet restore
+dotnet tool install --global dotnet-ef --version 8.*
 dotnet ef database update --project LeadManager.Infrastructure --startup-project LeadManager.Api
 dotnet run --project LeadManager.Api
 ```
