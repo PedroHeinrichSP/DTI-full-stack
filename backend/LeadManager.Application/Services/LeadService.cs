@@ -6,10 +6,12 @@ namespace LeadManager.Application.Services;
 public class LeadService : ILeadService
 {
     private readonly ILeadRepository _repository;
+    private readonly IEmailService _emailService;
 
-    public LeadService(ILeadRepository repository)
+    public LeadService(ILeadRepository repository, IEmailService emailService)
     {
         _repository = repository;
+        _emailService = emailService;
     }
 
     public async Task<List<LeadDto>> GetLeadsAsync(string status)
@@ -30,6 +32,10 @@ public class LeadService : ILeadService
 
         lead.Accept(confirmedPrice);
         await _repository.UpdateAsync(lead);
+
+        // Send confirmation email
+        var subject = $"Lead Accepted {lead.Id}";
+        await _emailService.SendEmailAsync("vendas@test.com", subject, $"The lead has been accepted. {lead.Description}");
         return true;
     }
 
