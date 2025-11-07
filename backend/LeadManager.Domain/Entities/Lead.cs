@@ -9,10 +9,24 @@ namespace LeadManager.Domain.Entities
         public string Suburb { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
-        public decimal? DiscountedPrice { get; set; }
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public string Status { get; set; } = "invited";
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
+
+        public void Accept(decimal? confirmedPrice = null)
+        {
+            if (confirmedPrice.HasValue)
+            {
+                Price = confirmedPrice.Value;
+            }
+            
+            Status = "accepted";
+        }
+
+        public void Decline()
+        {
+            Status = "declined";
+        }
     }
 }

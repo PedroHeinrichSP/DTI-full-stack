@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LeadManager.Domain\LeadManager.Domain.csproj" />
+    <ProjectReference Include="..\LeadManager.Application\LeadManager.Application.csproj" />
   </ItemGroup>
 
 </Project>

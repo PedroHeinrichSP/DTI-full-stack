@@ -1,45 +1,57 @@
-import LeadCard from "../components/LeadCard";
-import EmptyState from "../components/EmptyState";
-import LoadingSpinner from "../components/LoadingSpinner";
+import ConfirmModal from "../components/ConfirmModal";
 import { useLeads } from "../hooks/useLeads";
+import LeadCard from "../components/LeadCard";
+import LoadingSpinner from "../components/LoadingSpinner";
+import EmptyState from "../components/EmptyState";
 
-function InvitedPage() {
-  const { leads, isLoading, isError, acceptLead, declineLead } = useLeads("invited");
+export default function InvitedPage() {
+  const {
+    leads,
+    loading,
+    handleAccept,
+    handleDecline,
+    confirmModal,
+    handleConfirmAccept,
+    setConfirmModal,
+  } = useLeads("invited");
 
-  if (isLoading) { return <LoadingSpinner />; }
-  if (isError) { return <EmptyState message="Error while loading leads. Please try again."/>; }
-  if (!leads.length) { return <EmptyState message="No invited leads available." />; }
+  if (loading) return <LoadingSpinner />;
 
   return (
-    <section className="max-w-6xl mx-auto p-4">
-      {/* Cabeçalho da página */}
-      <header className="mb-6">
-        <h2 className="text-2xl font-bold mb-1">Invited Leads</h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          Leads recebidos aguardando ação.
-        </p>
-      </header>
+    <div className="p-6">
+      <h1 className="text-2xl font-semibold mb-4">Invited Leads</h1>
+      {leads.length === 0 ? (
+        <EmptyState message="No leads available." />
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {leads.map((lead) => (
+            <LeadCard
+              key={lead.id}
+              id={lead.id}
+              firstName={lead.firstName}
+              dateCreated={lead.dateCreated}
+              category={lead.category}
+              suburb={lead.suburb}
+              description={lead.description}
+              price={lead.price}
+              status={lead.status}
+              onAccept={() => handleAccept(lead.id)}
+              onDecline={() => handleDecline(lead.id)}
+            />
+          ))}
+        </div>
+      )}
 
-      {/* Lista de leads*/}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {leads.map((lead) => (
-          <LeadCard
-            key={lead.id}
-            id={lead.id}
-            firstName={lead.firstName}
-            dateCreated={lead.dateCreated}
-            category={lead.category}
-            suburb={lead.suburb}
-            description={lead.description}
-            price={lead.price}
-            status={lead.status}
-            onAccept={() => acceptLead(lead.id)}
-            onDecline={() => declineLead(lead.id)}
-          />
-        ))}
-      </div>
-    </section>
+      {confirmModal && (
+        <ConfirmModal
+          message={confirmModal.message}
+          suggestedPrice={confirmModal.suggestedPrice}
+          onConfirm={() =>
+            handleConfirmAccept(confirmModal.id, confirmModal.suggestedPrice)
+          }
+          onCancel={() => setConfirmModal(null)}
+        />
+      )}
+    </div>
   );
 }
-
-export default InvitedPage;

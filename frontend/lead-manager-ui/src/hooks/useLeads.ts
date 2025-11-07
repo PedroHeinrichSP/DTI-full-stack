@@ -1,47 +1,54 @@
-import type { LeadCardProps } from "../components/LeadCard";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { getLeads, acceptLead, declineLead } from "../services/api";
-import { toast } from "sonner";
 
-export function useLeads(status: "invited" | "accepted") {
-    const queryClient = useQueryClient();
+export function useLeads(status: string) {
+  const [leads, setLeads] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [confirmModal, setConfirmModal] = useState<{
+    id: number;
+    suggestedPrice: number;
+    message: string;
+  } | null>(null);
 
-    const { data, isLoading, isError } = useQuery<LeadCardProps[]>({
-        queryKey: ["leads", status],
-        queryFn: () => getLeads(status),
-    });
+  useEffect(() => {
+    (async () => {
+      const data = await getLeads(status);
+      setLeads(data);
+      setLoading(false);
+    })();
+  }, [status]);
 
-    const acceptMutation = useMutation({
-        mutationFn: (id: number) => acceptLead(id),
-        onSuccess: () => {
-            toast.success("Lead accepted successfully");
-            queryClient.invalidateQueries({ queryKey: ["leads", "invited"] });
-            queryClient.invalidateQueries({ queryKey: ["leads", "accepted"] });
-        },
-        onError: () => {
-            toast.error("Failed to accept lead");
-        },
-    });
+  const handleAccept = async (id: number) => {
+    const res = await acceptLead(id);
+    if (res.requiresConfirmation) {
+      setConfirmModal({
+        id,
+        suggestedPrice: res.suggestedPrice,
+        message: res.message,
+      });
+    } else {
+      setLeads((prev) => prev.filter((lead) => lead.id !== id));
+    }
+  };
 
-    const declineMutation = useMutation({
-        mutationFn: (id: number) => declineLead(id),
-        onSuccess: () => {
-            toast.success("Lead declined successfully");
-            queryClient.invalidateQueries({ queryKey: ["leads", "invited"] });
-            queryClient.invalidateQueries({ queryKey: ["leads", "accepted"] });
-        },
-        onError: () => {
-            toast.error("Failed to decline lead");
-        },
-    });
+  const handleConfirmAccept = async (id: number, confirmedPrice: number) => {
+    await acceptLead(id, confirmedPrice);
+    setLeads((prev) => prev.filter((lead) => lead.id !== id));
+    setConfirmModal(null);
+  };
 
-    console.log("Leads recebidos:", data);
+  const handleDecline = async (id: number) => {
+    await declineLead(id);
+    setLeads((prev) => prev.filter((lead) => lead.id !== id));
+  };
 
-    return {
-        leads: data || [],
-        isLoading,
-        isError,
-        acceptLead: acceptMutation.mutate,
-        declineLead: declineMutation.mutate,
-    };
+  return {
+    leads,
+    loading,
+    handleAccept,
+    handleDecline,
+    confirmModal,
+    handleConfirmAccept,
+    setConfirmModal,
+  };
 }

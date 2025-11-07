@@ -15,7 +15,6 @@ type LeadCardProps = {
   suburb: string;
   description: string;
   price: number;
-  discountedPrice?: number;
   email?: string;
   phone?: string;
   status: "invited" | "accepted";
@@ -32,7 +31,6 @@ function LeadCard({
   suburb,
   description,
   price,
-  discountedPrice,
   email,
   phone,
   status,
@@ -40,7 +38,6 @@ function LeadCard({
   onDecline,
 }: LeadCardProps) {
   const avatar = firstName[0].toUpperCase();
-  const hasDiscount = discountedPrice && discountedPrice < price;
 
   return (
     <div className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between">
@@ -124,18 +121,9 @@ function LeadCard({
         )}
 
         <div className="text-right">
-          {hasDiscount ? (
-            <>
-              <span className="line-through text-gray-500 text-sm mr-1">${price}</span>
-              <span className="text-green-500 font-semibold">
-                ${discountedPrice?.toFixed(2)}
-              </span>
-            </>
-          ) : (
             <span className="text-gray-800 dark:text-gray-200 font-semibold">
               ${price.toFixed(2)}
             </span>
-          )}
           <p className="text-xs text-gray-500 dark:text-gray-400">Lead Invitation</p>
         </div>
       </div>

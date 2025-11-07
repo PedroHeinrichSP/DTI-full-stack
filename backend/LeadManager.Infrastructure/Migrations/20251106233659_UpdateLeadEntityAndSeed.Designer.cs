@@ -4,6 +4,7 @@ using LeadManager.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeadManager.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251106233659_UpdateLeadEntityAndSeed")]
+    partial class UpdateLeadEntityAndSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,9 +38,7 @@ namespace LeadManager.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -82,9 +83,8 @@ namespace LeadManager.Infrastructure.Migrations
                         {
                             Id = 1,
                             Category = "Eletricista",
-                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateCreated = new DateTime(2025, 11, 6, 23, 36, 58, 216, DateTimeKind.Utc).AddTicks(8169),
                             Description = "Instalações e manutenções elétricas residenciais.",
-                            DiscountedPrice = 720m,
                             Email = "joao.silva@email.com",
                             FirstName = "João",
                             LastName = "Silva",
@@ -97,7 +97,7 @@ namespace LeadManager.Infrastructure.Migrations
                         {
                             Id = 2,
                             Category = "Pintora",
-                            DateCreated = new DateTime(2025, 1, 2, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateCreated = new DateTime(2025, 11, 6, 23, 36, 58, 216, DateTimeKind.Utc).AddTicks(9214),
                             Description = "Serviços de pintura residencial e comercial.",
                             Email = "maria.souza@email.com",
                             FirstName = "Maria",
@@ -111,7 +111,7 @@ namespace LeadManager.Infrastructure.Migrations
                         {
                             Id = 3,
                             Category = "Encanador",
-                            DateCreated = new DateTime(2025, 1, 3, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateCreated = new DateTime(2025, 11, 6, 23, 36, 58, 216, DateTimeKind.Utc).AddTicks(9598),
                             Description = "Reparo e instalação hidráulica completa.",
                             DiscountedPrice = 1080m,
                             Email = "carlos.lima@email.com",
