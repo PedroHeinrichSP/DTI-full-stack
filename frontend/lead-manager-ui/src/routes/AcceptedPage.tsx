@@ -25,11 +25,14 @@ export default function AcceptedPage() {
               key={lead.id}
               id={lead.id}
               firstName={lead.firstName}
+              lastName={lead.lastName}
               dateCreated={lead.dateCreated}
               category={lead.category}
               suburb={lead.suburb}
               description={lead.description}
               price={lead.price}
+              email={lead.email}
+              phone={lead.phone}
               status={lead.status}
               onAccept={() => handleAccept(lead.id)}
               onDecline={() => handleDecline(lead.id)}
